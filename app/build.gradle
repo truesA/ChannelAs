@@ -1,0 +1,73 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'channelkey'
+            keyPassword '123456'
+            storeFile file('D:/keystore/channelas.jks')
+            storePassword '123456'
+        }
+    }
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.channelas"
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        flavorDimensions "versionCode"
+    }
+    buildTypes {
+        release {
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+            minifyEnabled true   //是否代码混淆
+            multiDexEnabled true //防止方法数量超过65536导致错误
+        }
+        debug {
+            signingConfig signingConfigs.config
+            minifyEnabled true   //是否代码混淆
+            multiDexEnabled true //防止方法数量超过65536导致错误
+        }
+    }
+
+
+    productFlavors {
+        //配置多渠道
+        uc {}
+        _360 {}
+        baidu {}
+        yyb {
+            signingConfig signingConfigs.config
+        }
+      //  配置包的环境 和 替换包名
+        url{
+       // 主机地址
+            applicationId "com.host.channel"
+        }
+        urlonline{
+      //  线上地址
+            applicationId "com.online.channel"
+        }
+        urltest{
+      //  测试地址
+            applicationId "com.test.channel"
+        }
+    }
+
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+    }
+}
+
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
